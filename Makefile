@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -O -c
 TARGET = chacha20_v
-OBJS = chacha20_v.o whole_round.o state_init.o rows_to_vectors.o columns_to_vectors.o
+OBJS = chacha20_v.o whole_round.o state_init.o rows_to_vectors.o
 
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -O -o $(TARGET)
