@@ -1,11 +1,11 @@
 # include <stdio.h>
 # include <stdint.h>
 
-// This function separates the state into 4 vectors before they are passed through the whole_round function.
+// This function separates the 4 rows into 4 vectors before they are passed through the whole_round function.
 
-void state_to_vectors(uint32_t state[16], uint32_t v0[4], uint32_t v1[4], uint32_t v2[4], uint32_t v3[4])
+void rows_to_vectors(uint32_t state[16], uint32_t v0[4], uint32_t v1[4], uint32_t v2[4], uint32_t v3[4])
 {
-    // Assign each element of the state to their corresponding position within each vector.
+    // Assign each row to their corresponding position within each vector.
     for (int i = 0; i < 4; i++)
     {
         v0[i] = state[i];

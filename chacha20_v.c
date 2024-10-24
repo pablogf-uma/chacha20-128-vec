@@ -4,15 +4,16 @@
 
 int main()
 {
-    int state[16];
+    uint32_t state[16];
     char constant[16] = "expand 32-byte k";
-    uint8_t key[32] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    uint32_t blockcount = 0;
-    uint8_t nonce[12] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                          0x00, 0x00, 0x00, 0x00 };
+    uint8_t key[32] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+                        0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f};
+    uint32_t blockcount = 1;
+    uint8_t nonce[12] = {0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x4a,
+                          0x00, 0x00, 0x00, 0x00};
+
 
     state_init(state, constant, key, blockcount, nonce);
 
@@ -21,25 +22,24 @@ int main()
     uint32_t v2[4];
     uint32_t v3[4];
 
-    state_to_vectors(state, v0, v1, v2, v3);
+    rows_to_vectors(state, v0, v1, v2, v3);
 
+    whole_round(v0, v1, v2,v3);
+
+    uint32_t *vectors[4] = {v0, v1, v2, v3};
+
+
+    // Output vectors
     for (int i = 0; i < 4; i++)
     {
-        printf("%08x", v0[i]);
-        printf("%08x", v1[i]);
-        printf("%08x", v2[i]);
-        printf("%08x", v3[i]);
-        printf("\n");
+        printf("Vector %i:\n", i + 1);
+
+        for (int b = 0; b < 4; b++)
+        {
+            printf("%08x", vectors[i][b]);
+        }
+        printf("\n\n");
     }
-
-
+    
     return 0;
 }
-
-// Change it so quarter_round becomes whole_round (4 quarter rounds)
-// That means it should take 4 vectors: group the words into vectors where 4 words within a row or diagonal = vector
-// perform the permutations from the paper
-// perform rearrangement explained in the paper: rotations and shuffles. This is supposed to alter the state of the matrix so the columns (although in our case we want diagonals) are set on the rows place and we can just perform the same again.
-//          I tried understanding this but its not making sense: columns dont appear as rows
-//          Maybe we have to call the function twice (one for rows and the other one diagonals)? That would mean setting the vectors again so that they point towards different elements of the state (first call to the rows and second call to the diagonals)
-   

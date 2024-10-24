@@ -6,8 +6,8 @@
 // This function will do the job of 4 consecutive operations in the previous chacha into 1
 // A rows + diagonal round (which requires eight quarter-rounds) can now be reduced to two vectorized operations (one for the rows, the other for the diagonals)
 // Parameters: 4 vectors (one for each row/diagonal: 4 words * 4 bytes * 8 bits = 128 bits)
-/*void whole_round()
-{
+
+void whole_round(uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3) {
 
 }
 
