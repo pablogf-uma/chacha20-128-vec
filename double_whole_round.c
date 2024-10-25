@@ -7,7 +7,8 @@
 // rotate_bits performs 32_bit rotations for the elements inside the vectors.
 // It is comprehended within the whole_round function
 
-uint32_t rotate_left(uint32_t element, uint32_t shift) {
+uint32_t rotate_left(uint32_t element, uint32_t shift) 
+{
     return (element << shift) | (element >> (32 - shift));
 }
 
