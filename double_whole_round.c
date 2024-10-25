@@ -11,15 +11,12 @@ uint32_t rotate_left(uint32_t element, uint32_t shift) {
     return (element << shift) | (element >> (32 - shift));
 }
 
-
-
 // Whole_round will do the job of 4 consecutive operations in the previous chacha into 1
 // It will concatenate the columns and diagonal permutation rounds one after each other
 //      - Double (columns + diagonals) Whole (4 parallel quarter rounds) Round
 //      - 
 // Parameters: 4 vectors (one for each row: 4 words * 4 bytes * 8 bits = 128 bits)
 //      - The bit shifting in between operation sets rearranges the vectors so they contain the diagonals
-
 
 void double_whole_round(uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3) 
 {
@@ -116,9 +113,7 @@ void double_whole_round(uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3)
     v3[0] = v3[1];
     v3[1] = v3[2];
     v3[2] = v3[3];
-    v3[3] = temp_v;
-
-    
+    v3[3] = temp_v;    
 }
 
 /*
