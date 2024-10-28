@@ -44,7 +44,7 @@ WHOLE_ROUND:
     _mm_add_epi32(v1, v2) : Adds each element of v1 with the corresponding element of v2
     _mm_xor_si128(v1, v2) : XOR's each element of v1 with the corresponding element of v2
     _mm_shuffle_epi32(v1_vec, _MM_SHUFFLE(a,b,c,d)) : Shuffles the elements in a vector based on the mask provided
-    _MM_SHUFFLE(d, c, b, a) specifies the new order for elements. current value of position a moves to position 0, b to position 1, ...
+    _MM_SHUFFLE(d, c, b, a) specifies the new order for elements. The element at position 0 is moved to position a, element at position 2 is moved to position b...
     _mm_storeu_si128((__m128i*)v1, v1_vec): Stores the values of the register back to the original arrays
 
 */
@@ -75,10 +75,13 @@ void double_whole_round(uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3)
     v1_vec = _mm_xor_si128(v1_vec, v2_vec);
     v1_vec = rotate_left(v1_vec, 7);
 
+
     // Reorder elements in each vector to operate on diagonals:
-    v1_vec = _mm_shuffle_epi32(v1_vec, _MM_SHUFFLE(3, 0, 1, 2));
-    v2_vec = _mm_shuffle_epi32(v2_vec, _MM_SHUFFLE(2, 3, 0, 1));
-    v3_vec = _mm_shuffle_epi32(v3_vec, _MM_SHUFFLE(1, 2, 3, 0));
+    v1_vec = _mm_shuffle_epi32(v1_vec, _MM_SHUFFLE(0,3,2,1));
+    v2_vec = _mm_shuffle_epi32(v2_vec, _MM_SHUFFLE(1,0,3,2));
+    v3_vec = _mm_shuffle_epi32(v3_vec, _MM_SHUFFLE(2,1,0,3));
+
+    /*
 
     // Second set of operations (diagonals):
     v0_vec = _mm_add_epi32(v0_vec, v1_vec);
@@ -101,12 +104,16 @@ void double_whole_round(uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3)
     v1_vec = _mm_shuffle_epi32(v1_vec, _MM_SHUFFLE(1, 2, 3, 0));
     v2_vec = _mm_shuffle_epi32(v2_vec, _MM_SHUFFLE(2, 3, 0, 1));
     v3_vec = _mm_shuffle_epi32(v3_vec, _MM_SHUFFLE(3, 0, 1, 2));
+    */
+
 
     // Store result back in the input parameters:
     _mm_storeu_si128((__m128i*)v0, v0_vec);
     _mm_storeu_si128((__m128i*)v1, v1_vec);
     _mm_storeu_si128((__m128i*)v2, v2_vec);
     _mm_storeu_si128((__m128i*)v3, v3_vec);
+
+
 }
 
 /*
