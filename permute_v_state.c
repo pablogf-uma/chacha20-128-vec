@@ -11,9 +11,10 @@ void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v
         original_state[i] = state[i];
     }
 
-
     // Initialize vectors
     rows_to_vectors(state, v0, v1, v2, v3);
+
+    uint32_t *original_vectors[4] = {v0, v1, v2, v3};
 
     // Perform permutations on the state: 20 total rounds (10 column-diagonal operations)
     for (int i = 0; i < 10; i++) {
