@@ -6,12 +6,6 @@
 
 void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3, uint32_t output_keystream[64])
 {
-    // Make copy of the original state, for later addition to the permuted state
-    uint32_t original_state[16];
-    for (int i = 0; i < 16; i++) {
-        original_state[i] = state[i];
-    }
-
     // Initialize vectors
     state_to_vectors(state, v0, v1, v2, v3);
 
@@ -47,6 +41,11 @@ void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v
         output_keystream[i * 4 + 1] = (word >> 8)  & 0xFF;
         output_keystream[i * 4 + 2] = (word >> 16) & 0xFF;
         output_keystream[i * 4 + 3] = (word >> 24) & 0xFF;
+
+        // Inline assembly statement that acts as memory barrier
+        // This prevents the compiler from reordering the writes to output_keystream, 
+        //      ensuring that the loop performs as expected even under -O3 optimizer.
+        __asm__ __volatile__("" ::: "memory"); 
     }
 
     /*

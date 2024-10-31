@@ -4,8 +4,14 @@
 # include "chacha20_v_functions.h"
 # include <windows.h>
 # include <stdlib.h>
+# include <locale.h>
 
-/*
+// Function to format numbers with commas
+void format_number_with_commas(char *buffer, size_t buffer_size, int number) {
+    snprintf(buffer, buffer_size, "%'d", number);
+}
+
+/* NOT IN USE
 
     This function will allow us to calculate the throughput of the encryption algorithm. 
     Its output is the throughput in bytes per second.
@@ -16,7 +22,8 @@
 
 */
 
-// Not in use
+/* NOT IN USE
+
 void calculate_throughput(test_vector_t *test)
 {
     // Calculate the time taken to encrypt the plaintext
@@ -46,6 +53,9 @@ void calculate_throughput(test_vector_t *test)
         printf("Throughput: %.2f bytes per second.\n", length / time_taken);
     }
 }
+
+*/
+
 
 
 /* 
@@ -97,7 +107,6 @@ void calculate_throughput_2()
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 
             };
-    uint32_t expected_ciphertext = 0;
 
     test_vector_t test;
 
@@ -113,8 +122,6 @@ void calculate_throughput_2()
         memcpy(test.nonce, nonce, sizeof(nonce));
         test.blockcount = blockcount;
         memcpy(test.plaintext, plaintext, sizeof(plaintext));
-
-        clock_t current_time = clock(); // Get the current time at the begining of the loop.
 
         // Run the encryption algorithm with the updated parameters.
         encrypt(state, "expand 32-byte k", test.key, test.blockcount, test.nonce, v0, v1, v2, v3, test.plaintext, test.expected_ciphertext);
@@ -140,8 +147,16 @@ void calculate_throughput_2()
         plaintext[rand_num_plaintext] = rand() % 256;
 
     } while (((double)(clock() - start_time)) / CLOCKS_PER_SEC < 1.0); // Loop until 1 second has passed.
-    
+
+    // Set locale
+    setlocale(LC_NUMERIC, "");
+
     // Output results
-    printf("Throughput: %i bytes per second.\n", bytes_processed);
-    printf("Number of chacha20 calls in 1 second: %i.\n", encrypt_calls);
+    char throughput_buffer[20];
+    char calls_buffer[20];
+    format_number_with_commas(throughput_buffer, sizeof(throughput_buffer), bytes_processed);
+    format_number_with_commas(calls_buffer, sizeof(calls_buffer), encrypt_calls);
+
+    printf("Throughput: %s bytes per second.\n", throughput_buffer);
+    printf("Number of chacha20 calls in 1 second: %s.\n", calls_buffer);
 }

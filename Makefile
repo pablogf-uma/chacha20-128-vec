@@ -1,10 +1,10 @@
 CC = gcc
-CFLAGS = -mavx512f -O -c
+CFLAGS = -mavx512f -O3 -Wall -c
 TARGET = chacha20_v
 OBJS = chacha20_v.o double_whole_round.o state_init.o state_to_vectors.o permute_v_state.o vectors_to_state.o encrypt.o run_test.o calculate_throughput.o
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -mavx512f -O -o $(TARGET)
+	$(CC) $(OBJS) -mavx512f -O3 -Wall -o $(TARGET)
 
 chacha20_v.o: chacha20_v.c
 	$(CC) $(CFLAGS) chacha20_v.c 

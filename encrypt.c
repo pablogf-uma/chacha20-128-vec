@@ -17,7 +17,7 @@ void encrypt(uint32_t state[16], const char *constant, const uint8_t key[32], ui
         uint32_t keystream[64];
         state_init(state, constant, key, blockcount + i, nonce);
         permute_v_state(state, v0, v1, v2, v3, keystream);
-
+        
         // XOR the plaintext with the keystream
         for (int j = 0; j < 64; j++){
             output[i * 64 + j] = plaintext[i * 64 + j] ^ keystream[j];
