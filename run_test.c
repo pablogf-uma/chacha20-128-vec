@@ -17,25 +17,6 @@ int run_test(test_vector_t *test) {
 
     encrypt(state, "expand 32-byte k", test->key, test->blockcount, test->nonce, v0, v1, v2, v3, test->plaintext, output);
 
-    /*    printf("\nEXPECTED CIPHERTEXT\n");
-    for (int i = 0; i < 64; i++) {
-        printf("%02x", test->expected_ciphertext[i]);
-        printf(":");
-    }
-    printf("\b \b");
-    printf("\n");
-
-    printf("\nOUTPUT\n");
-    for (int i = 0; i < 64; i++) {
-        printf("%02x", output[i]);
-        printf(":");
-    }
-    printf("\b \b");
-    printf("\n");
-
-    */
-
-
     // Compare output with expected ciphertext
     if (memcmp(output, test->expected_ciphertext, plaintext_length) == 0) {
         return 1; // Test passed

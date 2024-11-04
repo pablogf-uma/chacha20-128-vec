@@ -6,24 +6,9 @@
 
 void vectors_to_state(uint32_t state[16], __m128i v0, __m128i v1, __m128i v2, __m128i v3)
 {
-    // Assign each vector to their corresponding position at each row
-    for (int i = 0; i < 4; i++)
-    {
-        state[i] = v0[i];
-    }
-
-    for (int i = 4; i < 8; i++)
-    {
-        state[i] = v1[i - 4];
-    }
-
-    for (int i = 8; i < 12; i++)
-    {
-        state[i] = v2[i - 8];
-    }
-
-    for (int i = 12; i < 16; i++)
-    {
-        state[i] = v3[i - 12];
-    }
+    // Extract the elements from each __m128i vector and assign them to the state array.
+    _mm_storeu_si128((__m128i*)&state[0], v0);
+    _mm_storeu_si128((__m128i*)&state[4], v1);
+    _mm_storeu_si128((__m128i*)&state[8], v2);
+    _mm_storeu_si128((__m128i*)&state[12], v3);
 }

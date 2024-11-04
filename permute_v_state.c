@@ -4,7 +4,7 @@
 # include "chacha20_v_functions.h"
 # include <immintrin.h>
 
-void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3, uint32_t output_keystream[64])
+void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3, uint8_t keystream[64])
 {
     // Initialize vectors
     state_to_vectors(state, v0, v1, v2, v3);
@@ -37,10 +37,10 @@ void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v
     // Serialize the permuted state into the output keystream
     for (size_t i = 0; i < 16; i++) {
         uint32_t word = state[i];
-        output_keystream[i * 4] = (word >> 0)  & 0xFF;
-        output_keystream[i * 4 + 1] = (word >> 8)  & 0xFF;
-        output_keystream[i * 4 + 2] = (word >> 16) & 0xFF;
-        output_keystream[i * 4 + 3] = (word >> 24) & 0xFF;
+        keystream[i * 4] = (word >> 0)  & 0xFF;
+        keystream[i * 4 + 1] = (word >> 8)  & 0xFF;
+        keystream[i * 4 + 2] = (word >> 16) & 0xFF;
+        keystream[i * 4 + 3] = (word >> 24) & 0xFF;
 
         // Inline assembly statement that acts as memory barrier
         // This prevents the compiler from reordering the writes to output_keystream, 
@@ -50,12 +50,11 @@ void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v
 
     /*
     // TESTING: Output the permuted vectors, state, and keystream
-    __m128i vectors[4] = {v0_permuted, v1_permuted, v2_permuted, v3_permuted};
 
+    uint32_t *vectors[4] = {v0, v1, v2, v3};
     for (int i = 0; i < 4; i++)
     {
         printf("Vector %i:\n", i + 1);
-
         for (int b = 0; b < 4; b++)
         {
             printf("%08x", vectors[i][b]);
@@ -63,15 +62,28 @@ void permute_v_state(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t *v
         printf("\n\n");
     }
 
-    for (int a = 0; a < 4; a++) 
+
+
+    __m128i vectors2[4] = {v0_permuted, v1_permuted, v2_permuted, v3_permuted};
+
+    for (int i = 0; i < 4; i++)
     {
+        printf("Vector %i:\n", i + 1);
         for (int b = 0; b < 4; b++)
         {
-            printf("%08x ", state[a * 4 + b]);  
+            uint32_t value;
+            switch (b) {
+                case 0: value = _mm_extract_epi32(vectors2[i], 0); break;
+                case 1: value = _mm_extract_epi32(vectors2[i], 1); break;
+                case 2: value = _mm_extract_epi32(vectors2[i], 2); break;
+                case 3: value = _mm_extract_epi32(vectors2[i], 3); break;
+            }
+            printf("%08x", value);
         }
-        printf("\n");  
+        printf("\n\n");
     }
-    printf("\n");
+
+
 
     
     for (int i = 0; i < 64; i++) {

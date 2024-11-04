@@ -47,6 +47,11 @@ WHOLE_ROUND:
     _mm_storeu_si128((__m128i*)v1, v1_vec): Stores the values of the register back to the original arrays
 
 */
+// Function to print vectors
+void print_vector(__m128i vec) {
+    uint32_t* v = (uint32_t*)&vec;
+    printf("%08x %08x %08x %08x\n", v[0], v[1], v[2], v[3]);
+}
 
 void double_whole_round(uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3) 
 {
@@ -105,4 +110,30 @@ void double_whole_round(uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3)
     _mm_storeu_si128((__m128i*)v1, v1_vec);
     _mm_storeu_si128((__m128i*)v2, v2_vec);
     _mm_storeu_si128((__m128i*)v3, v3_vec);
+
 }
+
+/*
+int main() {
+    uint32_t v0[4] = {0x61707865, 0x3320646e, 0x79622d32, 0x6b206574};
+    uint32_t v1[4] = {0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c};
+    uint32_t v2[4] = {0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c};
+    uint32_t v3[4] = {0x00000001, 0x09000000, 0x4a000000, 0x00000000};
+
+    for (int i = 0; i < 10; i++) {
+        double_whole_round(v0, v1, v2, v3);
+    }
+
+    printf("Vector 1: ");
+    print_vector(_mm_loadu_si128((__m128i*)v0));
+    printf("Vector 2: ");
+    print_vector(_mm_loadu_si128((__m128i*)v1));
+    printf("Vector 3: ");
+    print_vector(_mm_loadu_si128((__m128i*)v2));
+    printf("Vector 4: ");
+    print_vector(_mm_loadu_si128((__m128i*)v3));
+
+    return 0;
+}
+
+*/
