@@ -1,8 +1,8 @@
-# include <stdio.h>
-# include <string.h>
-# include <stdint.h>
-# include <string.h>
-# include "chacha20_v_functions.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include "chacha20_v_functions.h"
+#include <emmintrin.h>
 
 void encrypt(uint32_t state[16], const char *constant, const uint8_t key[32], uint32_t blockcount, const uint8_t nonce[12], uint32_t *v0, uint32_t *v1, uint32_t *v2, uint32_t *v3, char *plaintext, char *output) {
 
@@ -17,10 +17,13 @@ void encrypt(uint32_t state[16], const char *constant, const uint8_t key[32], ui
         uint8_t keystream[64];
         state_init(state, constant, key, blockcount + i, nonce);
         permute_v_state(state, v0, v1, v2, v3, keystream);
-        
-        // XOR the plaintext with the keystream
-        for (int j = 0; j < 64; j++){
-            output[i * 64 + j] = plaintext[i * 64 + j] ^ keystream[j];
+
+        // XOR the plaintext with the keystream (vectorized version)
+        for (int j = 0; j < 64; j += 16) {
+            __m128i plaintext_v = _mm_loadu_si128((__m128i *)&plaintext[i * 64 + j]);
+            __m128i keystream_v = _mm_loadu_si128((__m128i *)&keystream[j]);
+            __m128i output_v = _mm_xor_si128(plaintext_v, keystream_v);
+            _mm_storeu_si128((__m128i*)&output[i * 64 + j], output_v);
         }
 
         /* TEST:
@@ -33,24 +36,38 @@ void encrypt(uint32_t state[16], const char *constant, const uint8_t key[32], ui
         */
     }
 
-    // If there are remaining bytes, encrypt them
+    // If there are remaining bytes, encrypt them (vectorized version)
     if (remaining_bytes != 0) {
-        
+
         uint8_t keystream[64];
         state_init(state, constant, key, blockcount + number_of_blocks, nonce);
         permute_v_state(state, v0, v1, v2, v3, keystream);
 
-        for (size_t i = 0; i < remaining_bytes; i++) {
-            output[number_of_blocks * 64 + i] = plaintext[number_of_blocks * 64 + i] ^ keystream[i];
+        // Group the remaining block in chunks of 16 to vectorize what is possible
+        size_t offset_bytes = number_of_blocks * 64;
+        size_t n_blocks_of_16_byte = remaining_bytes / 16;
+        size_t remaining_after_16_grouping = remaining_bytes % 16;
+
+        for (size_t i = 0; i < n_blocks_of_16_byte; i++) {
+            __m128i plaintext_v = _mm_loadu_si128((__m128i *)&plaintext[offset_bytes + i * 16]);
+            __m128i keystream_v = _mm_loadu_si128((__m128i *)&keystream[i * 16]);
+            __m128i output_v = _mm_xor_si128(plaintext_v, keystream_v);
+            _mm_storeu_si128((__m128i*)&output[offset_bytes + i * 16], output_v);
         }
-        
-        /* TEST:
-        printf("\nBlock #%d\n", number_of_blocks + 1);
-        for (size_t j = 0; j < 64; j++) {
-            printf("%02x", (unsigned char)output[number_of_blocks * 64 + j]);
-            printf(" ");
+
+        if (remaining_after_16_grouping != 0) {
+            uint8_t temp_plaintext[16] = {0};
+            uint8_t temp_keystream[16] = {0};
+
+            // Copy the remaining bytes after 16 bytes grouping to the buffer variables
+            memcpy(temp_plaintext, &plaintext[offset_bytes + n_blocks_of_16_byte * 16], remaining_after_16_grouping);
+            memcpy(temp_keystream, &keystream[n_blocks_of_16_byte * 16], remaining_after_16_grouping);
+
+            // XOR the remaining bytes
+            for (size_t i = 0; i < remaining_after_16_grouping; i++) {
+                output[offset_bytes + n_blocks_of_16_byte * 16 + i] = temp_plaintext[i] ^ temp_keystream[i];
+            }
         }
-        */
     }
 
     // Add the null terminator to the output string
