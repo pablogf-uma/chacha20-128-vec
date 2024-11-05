@@ -3,7 +3,7 @@
 
 This repository contains a C implementation of ChaCha20 vectorized.
 
-This is an optimized version of the ChaCha20 algorithm that uses SIMD (Single Instruction, Multiple Data) instructions to process multiple pieces of data simultaneously, instead of the sequential process provided by the regular chacha20 algorithm.
+This is an optimized version of the ChaCha20 algorithm that uses SIMD (Single Instruction, Multiple Data) instructions to process multiple pieces of data simultaneously, instead of the sequential processing provided by the regular chacha20 algorithm.
 
 
 <h2>Contents:</h2>
