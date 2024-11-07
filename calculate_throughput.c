@@ -58,8 +58,7 @@ void calculate_throughput(test_vector_t *test)
 
 
 
-/* 
-
+/*
     This function will calculate the amount of bytes processed in 1 second by the chacha20 algorithm.
 
     It will execute as many encryption operations as possible in 1 second, and then output the number of bytes processed in that time.
@@ -67,15 +66,14 @@ void calculate_throughput(test_vector_t *test)
     All the parameters required for encryption will be updated each time the encryption function is called.
 
     This way the processor is forced to encrypt each time with different parameters, so that we can measure the true throughut of the algorithm.
-
 */
 
 void calculate_throughput_2()
 {
-    // Random seed for later randum numer generation.
+    // Random seed for later randum number generation.
     srand(time(NULL));
 
-    // Get the start time
+    // Get the start time.
     clock_t start_time = clock();
 
     // Counter for number of bytes processed.
@@ -127,7 +125,7 @@ void calculate_throughput_2()
         encrypt(state, "expand 32-byte k", test.key, test.blockcount, test.nonce, v0, v1, v2, v3, test.plaintext, test.expected_ciphertext);
 
         // Update the number of bytes processe and the number of encrypt() calls.
-        bytes_processed += 64; // number of bytes of the plaintext.
+        bytes_processed += 64; // Number of bytes of the plaintext.
         encrypt_calls += 1;
 
         // Generate 3 random numbers for the positions where the parameters will be updated for the next iteration.
@@ -159,4 +157,14 @@ void calculate_throughput_2()
 
     printf("Throughput: %s bytes per second.\n", throughput_buffer);
     printf("Number of chacha20 calls in 1 second: %s.\n", calls_buffer);
+}
+
+
+/*
+    This function calculates the amount of clock cycles performed by the processor per byte encrypted by the algorithm.
+*/
+
+void calculate_throughput_3()
+{
+
 }

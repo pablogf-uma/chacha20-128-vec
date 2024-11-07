@@ -217,11 +217,13 @@ int main()
     int passed_tests = 0;
 
     for (int i = 0; i < num_tests; i++) {
+        printf("TEST VECTOR %d:\n", i);
+
         if (run_test(&tests[i])) {
-            printf("Test vector %d passed.\n", i);
+            printf("Passed!\n", i);
             passed_tests++;
         } else {
-            printf("Test vector %d failed.\n", i);
+            printf("Failed!\n", i);
         }
         printf("\n");
     }
