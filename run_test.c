@@ -24,10 +24,9 @@ int run_test(test_vector_t *test) {
     // End cycle counting.
     unsigned long long end_cycles = __rdtsc();
 
-    // Calculate cycles per byte.
+    // Calculate cycles per byte
     unsigned long long cycles = end_cycles - start_cycles;   
     double cycles_per_byte = (double)cycles / plaintext_length;
-
     printf("Total input bytes: %i", plaintext_length);
     printf("\nClock cycles per byte: %.2f\n", cycles_per_byte);
 
