@@ -158,13 +158,3 @@ void calculate_throughput_2()
     printf("Throughput: %s bytes per second.\n", throughput_buffer);
     printf("Number of chacha20 calls in 1 second: %s.\n", calls_buffer);
 }
-
-
-/*
-    This function calculates the amount of clock cycles performed by the processor per byte encrypted by the algorithm.
-*/
-
-void calculate_throughput_3()
-{
-
-}
