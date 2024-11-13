@@ -20,6 +20,6 @@ This is an optimized version of the ChaCha20 algorithm that uses SIMD (Single In
 
 These resources were used throughout the development of the project outlined above.
 
-- [Paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6822267&tag=1)
+- [Paper](https://eprint.iacr.org/2013/759.pdf)
 
 <h5 align="center">Developed by Pablo Gutiérrez - October 2024</h5>
