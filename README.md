@@ -21,5 +21,3 @@ It is called 128-bit vectorization because it requires 4 128-bit vectors as inpu
 These resources were used throughout the development of the project outlined above.
 
 - [Paper](https://eprint.iacr.org/2013/759.pdf)
-
-<h5 align="center">Developed by Pablo Gutiérrez - October 2024</h5>
