@@ -5,7 +5,7 @@
 #include <x86intrin.h>
 
 // Function to run a single test and measure clock cyles per byte for each test
-int run_test(test_vector_t *test) {
+int run_encrypt_test(test_vector_t *test) {
     
     uint32_t state[16];
     size_t plaintext_length = strlen(test->plaintext);
