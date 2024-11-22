@@ -1,8 +1,7 @@
 CC = gcc
 CFLAGS = -mavx512f -O3 -Wall -c
 TARGET = chacha20
-OBJS = chacha20_v128.o double_whole_round_v128.o state_init.o state_to_vectors_v128.o permute_state_v128.o vectors_to_state_v128.o encrypt_v128.o run_test.o calculate_throughput.o
-
+OBJS = chacha20_v128.o double_whole_round_v128.o state_init.o state_to_vectors_v128.o permute_state_v128.o vectors_to_state_v128.o encrypt_v128.o run_test.o calculate_throughput.o decrypt_v128.o run_decrypt_test.o
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -mavx512f -O3 -Wall -o $(TARGET)
 
@@ -32,6 +31,12 @@ run_test.o: run_test.c
 
 calculate_throughput.o: calculate_throughput.c
 	$(CC) $(CFLAGS) calculate_throughput.c
+
+decrypt_v128.o: decrypt_v128.c
+	$(CC) $(CFLAGS) decrypt_v128.c
+
+run_decrypt_test.o: run_decrypt_test.c
+	$(CC) $(CFLAGS) run_decrypt_test.c
 
 clean: 
 	cmd /C del /Q $(TARGET) $(OBJS) chacha20.exe

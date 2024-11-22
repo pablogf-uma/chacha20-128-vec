@@ -8,22 +8,21 @@
 int run_decrypt_test(test_vector_t *test) {
     
     uint32_t state1[16];
-    uint32_t state2[16];
     int plaintext_length = strlen(test->plaintext);
     char output[plaintext_length];
     
-    uint32_t v0[8];
-    uint32_t v1[8];
-    uint32_t v2[8];
-    uint32_t v3[8];
+    uint32_t v0[4];
+    uint32_t v1[4];
+    uint32_t v2[4];
+    uint32_t v3[4];
 
     // Start cycle counting.
     unsigned long long start_cycles = __rdtsc();
     
-    encrypt_v256(state1, state2, "expand 32-byte k", test->key, test->blockcount, test->nonce, v0, v1, v2, v3, test->plaintext, output);
+    encrypt_v128(state1, "expand 32-byte k", test->key, test->blockcount, test->nonce, v0, v1, v2, v3, test->plaintext, output);
 
     char output_plaintext[strlen(output)];
-    decrypt_v256(state1, state2, "expand 32-byte k", test->key, test->blockcount, test->nonce, v0, v1, v2, v3, output_plaintext, output);
+    decrypt_v128(state1, "expand 32-byte k", test->key, test->blockcount, test->nonce, v0, v1, v2, v3, output_plaintext, output);
     
     // End cycle counting.
     unsigned long long end_cycles = __rdtsc();
@@ -41,5 +40,4 @@ int run_decrypt_test(test_vector_t *test) {
     } else {
         return 0;
     }
-
 }
