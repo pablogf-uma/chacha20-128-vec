@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -mavx512f -O3 -Wall -c
 TARGET = chacha20
-OBJS = chacha20_v128.o double_whole_round_v128.o state_init.o state_to_vectors_v128.o permute_state_v128.o vectors_to_state_v128.o encrypt_v128.o run_encrypt_test.o calculate_throughput.o decrypt_v128.o run_decrypt_test.o
+OBJS = chacha20_v128.o double_whole_round_v128.o state_init.o state_to_vectors_v128.o permute_state_v128.o vectors_to_state_v128.o encrypt_v128.o run_encrypt_test.o calculate_throughput.o decrypt_v128.o run_decrypt_test.o encrypt_custom_input.o decrypt_custom_input.o
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -mavx512f -O3 -Wall -o $(TARGET)
 
@@ -37,6 +37,12 @@ decrypt_v128.o: decrypt_v128.c
 
 run_decrypt_test.o: run_decrypt_test.c
 	$(CC) $(CFLAGS) run_decrypt_test.c
+
+encrypt_custom_input.o: encrypt_custom_input.c
+	$(CC) $(CFLAGS) encrypt_custom_input.c
+
+decrypt_custom_input.o: decrypt_custom_input.c
+	$(CC) $(CFLAGS) decrypt_custom_input.c
 
 clean: 
 	cmd /C del /Q $(TARGET) $(OBJS) chacha20.exe
