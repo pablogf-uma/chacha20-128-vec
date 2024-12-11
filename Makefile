@@ -6,14 +6,14 @@ else
 endif
 
 CC = gcc
-CFLAGS = -mavx512f -O3 -Wall -c
+CFLAGS = -O3 -march=native -Wall -flto -fprofile-use -c
 TARGET = chacha20
 OBJS = chacha20_v128.o double_whole_round_v128.o state_init.o state_to_vectors_v128.o \
 		 permute_state_v128.o vectors_to_state_v128.o encrypt_v128.o run_encrypt_test.o \
 		 calculate_throughput.o decrypt_v128.o run_decrypt_test.o encrypt_custom_input.o \
 		 decrypt_custom_input.o
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -mavx512f -O3 -Wall -o $(TARGET)
+	$(CC) $(OBJS) -flto -o $(TARGET)
 
 chacha20_v128.o: chacha20_v128.c
 	$(CC) $(CFLAGS) chacha20_v128.c 
