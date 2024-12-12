@@ -6,7 +6,7 @@ else
 endif
 
 CC = gcc
-CFLAGS = -O3 -march=native -Wall -flto -fprofile-use -c
+CFLAGS = -O3 -march=native -Wall -flto -fprofile-generate -c
 TARGET = chacha20
 OBJS = chacha20_v128.o double_whole_round_v128.o state_init.o state_to_vectors_v128.o \
 		 permute_state_v128.o vectors_to_state_v128.o encrypt_v128.o run_encrypt_test.o \
