@@ -31,23 +31,13 @@ void permute_state_v128(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t
     v2_permuted = _mm_add_epi32(v2_permuted, v2_og);
     v3_permuted = _mm_add_epi32(v3_permuted, v3_og);
 
-    // Load permuted vectors back into the state
-    vectors_to_state_v128(state, v0_permuted, v1_permuted, v2_permuted, v3_permuted);
+    // Serialize the vectors into the keystream using 128-bit vectorization
+    __m128i permuted_vectors[4] = {v0_permuted, v1_permuted, v2_permuted, v3_permuted};
 
-    // Serialize the permuted state into the output keystream
-    for (size_t i = 0; i < 16; i++) {
-        uint32_t word = state[i];
-        keystream[i * 4] = (word >> 0)  & 0xFF;
-        keystream[i * 4 + 1] = (word >> 8)  & 0xFF;
-        keystream[i * 4 + 2] = (word >> 16) & 0xFF;
-        keystream[i * 4 + 3] = (word >> 24) & 0xFF;
-
-        // Inline assembly statement that acts as memory barrier
-        // This prevents the compiler from reordering the writes to output_keystream, 
-        //      ensuring that the loop performs as expected even under -O3 optimizer.
-        __asm__ __volatile__("" ::: "memory"); 
+    for (size_t i = 0; i < 4; i++) { 
+        _mm_storeu_si128((__m128i*)&keystream[i * 16], permuted_vectors[i]); // Store vectors into the keystream 128-bits at a time
     }
-
+    
     /*
     // TESTING: Output the permuted vectors, state, and keystream
 
@@ -62,10 +52,6 @@ void permute_state_v128(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t
         printf("\n\n");
     }
 
-
-
-    __m128i vectors2[4] = {v0_permuted, v1_permuted, v2_permuted, v3_permuted};
-
     for (int i = 0; i < 4; i++)
     {
         printf("Vector %i:\n", i + 1);
@@ -73,24 +59,21 @@ void permute_state_v128(uint32_t state[16], uint32_t *v0, uint32_t *v1, uint32_t
         {
             uint32_t value;
             switch (b) {
-                case 0: value = _mm_extract_epi32(vectors2[i], 0); break;
-                case 1: value = _mm_extract_epi32(vectors2[i], 1); break;
-                case 2: value = _mm_extract_epi32(vectors2[i], 2); break;
-                case 3: value = _mm_extract_epi32(vectors2[i], 3); break;
+                case 0: value = _mm_extract_epi32(permuted_vectors[i], 0); break;
+                case 1: value = _mm_extract_epi32(permuted_vectors[i], 1); break;
+                case 2: value = _mm_extract_epi32(permuted_vectors[i], 2); break;
+                case 3: value = _mm_extract_epi32(permuted_vectors[i], 3); break;
             }
             printf("%08x", value);
         }
         printf("\n\n");
     }
 
-
-
-    
     for (int i = 0; i < 64; i++) {
-        printf("%02x", output_keystream[i]);
+        printf("%02x", keystream[i]);
         printf(":");
     }
     printf("\b \b");
-    printf("\n");
-    */
+    printf("\n");*/
+    
 }
