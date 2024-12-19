@@ -3,8 +3,15 @@
 
 This is an optimized version of the ChaCha20 algorithm that uses SIMD (Single Instruction, Multiple Data) instructions to process multiple pieces of data simultaneously, instead of the sequential processing provided by the regular chacha20 algorithm.
 
-It is called 128-bit vectorization because it requires 4 128-bit vectors as input (each vector is a complete row of the state matrix).
+This version utlizes Intel Intrinsics through the header immintrin.h.
 
+It is called 128-bit vectorization because it requires 4 128-bit vectors as input (each vector is a complete row of the state matrix, 4 words x 4 bytes in each word x 8 bits in each byte).
+
+The function performs 4 consecutive operations of the non-vectorized version of chacha20 into 1 single vectorized operation:
+
+- This operation, which I called a "Double whole round" can now be reduced to **just two vectorized operations** (one for the row round and one for the column round), because each vector operation handles **two quarter-rounds at once**.
+- It will concatenate the columns and diagonal permutation rounds one after each other.
+- Double (columns + diagonals) Whole (4 parallel quarter rounds) Round.
 
 <h2>Resources:</h2>
 
